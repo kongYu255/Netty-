@@ -13,10 +13,21 @@ import java.io.FileOutputStream;
 
 public class FileUploadHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
+    private final String url;
+
+    public FileUploadHandler(String url) {
+        this.url = url;
+    }
 
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, FullHttpRequest request) throws Exception {
+        // 请求解析是否正确
         if (!request.decoderResult().isSuccess()) {
             sendError(channelHandlerContext, HttpResponseStatus.BAD_REQUEST);
+            return;
+        }
+        // 请求方式是否为post
+        if (request.method() != HttpMethod.POST) {
+            sendError(channelHandlerContext, HttpResponseStatus.METHOD_NOT_ALLOWED);
             return;
         }
         String uri = request.uri();

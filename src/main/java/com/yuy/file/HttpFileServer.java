@@ -29,7 +29,8 @@ public class HttpFileServer {
                             ch.pipeline().addLast("http-aggregator", new HttpObjectAggregator(65536));
                             ch.pipeline().addLast("http-encoder", new HttpResponseEncoder());
                             ch.pipeline().addLast("http-chunked", new ChunkedWriteHandler());
-                            ch.pipeline().addLast("fileServerHandler", new FileDownLoadHandler(url));
+                            ch.pipeline().addLast("fileDownLoadHandler", new FileDownLoadHandler(url));
+                            ch.pipeline().addLast("fileUploadHandler", new FileUploadHandler(url));
                         }
                     });
 
