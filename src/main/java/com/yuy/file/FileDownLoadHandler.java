@@ -30,7 +30,7 @@ public class FileDownLoadHandler extends SimpleChannelInboundHandler<FullHttpReq
             return;
         }
         if (request.method() != HttpMethod.GET) {
-            sendError(channelHandlerContext, HttpResponseStatus.BAD_REQUEST);
+            channelHandlerContext.fireChannelRead(request);
             return;
         }
         final String uri = request.uri();
@@ -41,11 +41,6 @@ public class FileDownLoadHandler extends SimpleChannelInboundHandler<FullHttpReq
             return;
         }
 
-        // 如果是请求上传文件，则进入下一个处理器处理
-        if (uri.contains("/file/upload")) {
-            return;
-        }
-
         if (path == null || path.equals("")) {
             sendError(channelHandlerContext, HttpResponseStatus.FORBIDDEN);
         }
@@ -53,15 +48,22 @@ public class FileDownLoadHandler extends SimpleChannelInboundHandler<FullHttpReq
         File file = new File(path);
         if (file.isHidden() || !file.exists()) {
             sendError(channelHandlerContext, HttpResponseStatus.NOT_FOUND);
+            return;
         }
 
         if (file.isDirectory()) {
             sendError(channelHandlerContext, HttpResponseStatus.NOT_FOUND);
+            return;
         }
 
         if (!file.isFile()) {
             sendError(channelHandlerContext, HttpResponseStatus.FORBIDDEN);
             return;
+        }
+
+        // 如果是请求上传文件，则进入下一个处理器处理
+        if (uri.contains("/upload")) {
+            channelHandlerContext.fireChannelRead(request);
         }
 
         sendSuccess(channelHandlerContext, file, request);

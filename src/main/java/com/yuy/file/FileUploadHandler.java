@@ -6,21 +6,26 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.multipart.DefaultHttpDataFactory;
+import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
+import io.netty.handler.codec.http.multipart.InterfaceHttpData;
+import io.netty.handler.codec.http.multipart.MemoryAttribute;
 import io.netty.util.CharsetUtil;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.*;
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 public class FileUploadHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
-    private final String url;
-
-    public FileUploadHandler(String url) {
-        this.url = url;
-    }
+    private final String DEFAULT_FILE_PATH = System.getProperty("user.dir") + "/src";
 
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, FullHttpRequest request) throws Exception {
-        // 请求解析是否正确
+        // 解析请求是否正确
         if (!request.decoderResult().isSuccess()) {
             sendError(channelHandlerContext, HttpResponseStatus.BAD_REQUEST);
             return;
@@ -31,9 +36,24 @@ public class FileUploadHandler extends SimpleChannelInboundHandler<FullHttpReque
             return;
         }
         String uri = request.uri();
-        ByteBuf content = request.content();
-        byte[] bytes = new byte[content.readableBytes()];
-        content.readBytes(bytes);
+        String fileName = null;
+        if (!uri.startsWith("/src/upload")) {
+            sendError(channelHandlerContext, HttpResponseStatus.NOT_FOUND);
+            return;
+        }
+
+        // 如果未带文件名参数，则随机赋予
+        if (request.headers().get("fileName") != null && !request.headers().get("fileName").equals("")) {
+            fileName = request.headers().get("fileName");
+        }
+        Map<String, Object> params = getRequestParams(request);
+        if (params.get("fileName") != null && !params.get("fileName").equals("")) {
+            fileName = (String) params.get("fileName");
+        }
+
+
+
+
 
     }
 
@@ -47,5 +67,26 @@ public class FileUploadHandler extends SimpleChannelInboundHandler<FullHttpReque
                 Unpooled.copiedBuffer("Failture: " + status.toString() + "\r\n", CharsetUtil.UTF_8));
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html;charset=UTF-8");
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+    }
+
+
+    /**
+     * 解析FullHttpRequest的请求体内容，把它转换为map
+     * @param request
+     * @return
+     */
+    private static Map<String, Object> getRequestParams(FullHttpRequest request) {
+        HttpPostRequestDecoder decoder = new HttpPostRequestDecoder(new DefaultHttpDataFactory(false), request);
+        List<InterfaceHttpData> requestBody = decoder.getBodyHttpDatas();
+        Map<String, Object> param = new HashMap<String, Object>();
+
+        for (InterfaceHttpData data : requestBody) {
+            if (data.getHttpDataType() == InterfaceHttpData.HttpDataType.Attribute) {
+                MemoryAttribute attribute = (MemoryAttribute) data;
+                param.put(attribute.getName(), attribute.getValue());
+            }
+        }
+
+        return param;
     }
 }
