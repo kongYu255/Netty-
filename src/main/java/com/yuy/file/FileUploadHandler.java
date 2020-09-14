@@ -6,10 +6,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
-import io.netty.handler.codec.http.multipart.DefaultHttpDataFactory;
-import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
-import io.netty.handler.codec.http.multipart.InterfaceHttpData;
-import io.netty.handler.codec.http.multipart.MemoryAttribute;
+import io.netty.handler.codec.http.multipart.*;
 import io.netty.util.CharsetUtil;
 
 import java.io.*;
@@ -23,6 +20,16 @@ import java.util.regex.Pattern;
 public class FileUploadHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     private final String DEFAULT_FILE_PATH = System.getProperty("user.dir") + "/src";
+
+    private HttpPostRequestDecoder decoder;
+
+
+    static {
+        DiskFileUpload.baseDirectory = null;
+        DiskFileUpload.deleteOnExitTemporaryFile = true;
+        DiskAttribute.baseDirectory = null;
+        DiskAttribute.deleteOnExitTemporaryFile = true;
+    }
 
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, FullHttpRequest request) throws Exception {
         // 解析请求是否正确
@@ -49,6 +56,10 @@ public class FileUploadHandler extends SimpleChannelInboundHandler<FullHttpReque
         Map<String, Object> params = getRequestParams(request);
         if (params.get("fileName") != null && !params.get("fileName").equals("")) {
             fileName = (String) params.get("fileName");
+        }
+
+        if (decoder != null) {
+
         }
 
 

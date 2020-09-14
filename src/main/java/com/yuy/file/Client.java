@@ -30,7 +30,7 @@ public class Client {
             if (dataInputStream.read(bytes) != -1) {
                 outputStream.write(Integer.parseInt("1234"));
             }
-
+            connection.connect();
 
             int code = connection.getResponseCode();
             if (code == HttpURLConnection.HTTP_OK) {
