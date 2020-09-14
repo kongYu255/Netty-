@@ -14,7 +14,7 @@ import java.io.File;
 
 public class FileUploadClient {
     public void connect(int port, String host, final FileUploadFile fileUploadFile) throws Exception {
-        EventLoopGroup group = new NioEventLoopGroup();
+        EventLoopGroup group = new NioEventLoopGroup(1);
         try {
             Bootstrap b = new Bootstrap();
             b.group(group).channel(NioSocketChannel.class).option(ChannelOption.TCP_NODELAY, true).handler(new ChannelInitializer<Channel>() {
@@ -44,7 +44,7 @@ public class FileUploadClient {
         }
         try {
             FileUploadFile uploadFile = new FileUploadFile();
-            File file = new File(System.getProperty("user.dir") + "/src/123.txt");
+            File file = new File(System.getProperty("user.dir") + "/src/Colorful-Abstraction02.jpg");
             String fileMd5 = file.getName();// 文件名
             uploadFile.setFile(file);
             uploadFile.setFile_md5(fileMd5);
