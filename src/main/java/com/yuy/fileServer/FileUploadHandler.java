@@ -69,6 +69,7 @@ public class FileUploadHandler extends SimpleChannelInboundHandler<HttpObject> {
             }
         }
 
+        // 由于Netty中的HttpRequest是分段，如果是最后一个分段，则返回response
         if (msg instanceof LastHttpContent) {
             HttpResponse response = getResponse();
             channelHandlerContext.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE).sync();

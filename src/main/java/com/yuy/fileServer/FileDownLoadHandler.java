@@ -34,16 +34,17 @@ public class FileDownLoadHandler extends SimpleChannelInboundHandler<HttpObject>
             sendError(channelHandlerContext, HttpResponseStatus.BAD_REQUEST);
             return;
         }
-
-
+        // 如果解析url失败，则返回错误信息
         if (!request.decoderResult().isSuccess()) {
             sendError(channelHandlerContext, HttpResponseStatus.BAD_REQUEST);
             return;
         }
+        // 由于是最后一个请求处理链，所以请求方式不匹配则可以直接返回错误信息
         if (request.method() != HttpMethod.GET) {
             sendError(channelHandlerContext, HttpResponseStatus.METHOD_NOT_ALLOWED);
             return;
         }
+
         final String uri = request.uri();
         final String path = sanitizeUri(uri);
 
@@ -62,11 +63,13 @@ public class FileDownLoadHandler extends SimpleChannelInboundHandler<HttpObject>
             return;
         }
 
+        // 如果文件是文件夹，则返回错误信息
         if (file.isDirectory()) {
             sendError(channelHandlerContext, HttpResponseStatus.NOT_FOUND);
             return;
         }
 
+        // 如果不是文件，则返回错误信息
         if (!file.isFile()) {
             sendError(channelHandlerContext, HttpResponseStatus.FORBIDDEN);
             return;
@@ -77,6 +80,7 @@ public class FileDownLoadHandler extends SimpleChannelInboundHandler<HttpObject>
 //            channelHandlerContext.fireChannelRead(request);
 //        }
 
+        // 返回正确信息
         sendSuccess(channelHandlerContext, file, request);
     }
 
