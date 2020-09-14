@@ -31,7 +31,6 @@ public class HttpFileServer {
                             ch.pipeline().addLast("http-encoder", new HttpResponseEncoder());
                             ch.pipeline().addLast("http-chunked", new HttpContentCompressor());
                             ch.pipeline().addLast("fileDownLoadHandler", new FileDownLoadHandler(url + "/download"));
-                            ch.pipeline().addLast("fileUploadHandler", new FileUploadHandler());
                         }
                     });
 

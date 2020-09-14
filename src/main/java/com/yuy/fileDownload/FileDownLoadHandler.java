@@ -28,7 +28,7 @@ public class FileDownLoadHandler extends SimpleChannelInboundHandler<FullHttpReq
             return;
         }
         if (request.method() != HttpMethod.GET) {
-            channelHandlerContext.fireChannelRead(request);
+            sendError(channelHandlerContext, HttpResponseStatus.METHOD_NOT_ALLOWED);
             return;
         }
         final String uri = request.uri();
