@@ -1,0 +1,49 @@
+package com.yuy.netty.server;
+
+import com.yuy.netty.FileUploadFile;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+
+import java.io.File;
+import java.io.RandomAccessFile;
+
+public class FileUploadServerHandler extends SimpleChannelInboundHandler<Object> {
+
+    private int byteRead;
+
+    private volatile int start = 0;
+
+    private String fileDir = "/home/santi/Desktop";
+
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object o) throws Exception {
+        if (o instanceof FileUploadFile) {
+            FileUploadFile ef = (FileUploadFile) o;
+            byte[] bytes = ef.getBytes();
+
+            byteRead = ef.getEndPos();
+
+            String md5 = ef.getFile_md5();
+            String path = fileDir + File.separator + md5;
+            File file = new File(path);
+            RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
+            randomAccessFile.seek(start);
+            randomAccessFile.write(bytes);
+            start = start + byteRead;
+            if (byteRead > 0) {
+                channelHandlerContext.writeAndFlush(start);
+            } else {
+                randomAccessFile.close();
+                channelHandlerContext.close();
+            }
+        }
+    }
+
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
+        ctx.close();
+    }
+}
