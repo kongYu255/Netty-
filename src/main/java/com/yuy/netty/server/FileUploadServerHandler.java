@@ -25,7 +25,19 @@ public class FileUploadServerHandler extends SimpleChannelInboundHandler<Object>
             byteRead = ef.getEndPos();
 
             String md5 = ef.getFile_md5();
-            String path = fileDir + File.separator + md5;
+            String path = null;
+            if (ef.getFilePath() == null || ef.getFilePath().equals("")) {
+                path = fileDir + File.separator;
+            } else {
+                path = ef.getFilePath() + File.separator;
+            }
+            // 查看目录是否存在
+            File dir = new File(path);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            path += md5;
+
             File file = new File(path);
             RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
             randomAccessFile.seek(start);

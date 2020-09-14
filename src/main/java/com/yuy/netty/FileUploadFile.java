@@ -8,6 +8,7 @@ public class FileUploadFile implements Serializable {
     private static final long serialVersionUID = 1L;
     private File file;// 文件
     private String file_md5;// 文件名
+    private String filePath; // 文件路径
     private int starPos;// 开始位置
     private byte[] bytes;// 文件字节数组
     private int endPos;// 结尾位置
@@ -50,5 +51,13 @@ public class FileUploadFile implements Serializable {
 
     public void setFile_md5(String file_md5) {
         this.file_md5 = file_md5;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 }

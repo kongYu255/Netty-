@@ -48,6 +48,7 @@ public class FileUploadClient {
             String fileMd5 = file.getName();// 文件名
             uploadFile.setFile(file);
             uploadFile.setFile_md5(fileMd5);
+            uploadFile.setFilePath("/home/santi/Desktop/upload");
             uploadFile.setStarPos(0);// 文件开始位置
             new FileUploadClient().connect(port, "127.0.0.1", uploadFile);
         } catch (Exception e) {
