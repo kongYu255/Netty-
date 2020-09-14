@@ -1,5 +1,6 @@
 package com.yuy.fileDownload;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -8,6 +9,8 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.multipart.*;
 import io.netty.util.CharsetUtil;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +21,9 @@ public class FileUploadHandler extends SimpleChannelInboundHandler<FullHttpReque
 
     private HttpPostRequestDecoder decoder;
 
+    private static final HttpDataFactory factory = new DefaultHttpDataFactory(DefaultHttpDataFactory.MINSIZE);
+
+    private HttpRequest httpRequest;
 
     static {
         DiskFileUpload.baseDirectory = null;
@@ -26,7 +32,13 @@ public class FileUploadHandler extends SimpleChannelInboundHandler<FullHttpReque
         DiskAttribute.deleteOnExitTemporaryFile = true;
     }
 
+    private void init(FullHttpRequest request) {
+        httpRequest = request;
+        decoder = new HttpPostRequestDecoder(factory, request);
+    }
+
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, FullHttpRequest request) throws Exception {
+        init(request);
         // 解析请求是否正确
         if (!request.decoderResult().isSuccess()) {
             sendError(channelHandlerContext, HttpResponseStatus.BAD_REQUEST);
@@ -54,13 +66,26 @@ public class FileUploadHandler extends SimpleChannelInboundHandler<FullHttpReque
         }
 
         if (decoder != null) {
-
+            ByteBuf content = request.content();
+            decoder.offer(new DefaultHttpContent(content));
+            readFileIntoDisk();
         }
+    }
 
-
-
-
-
+    private void readFileIntoDisk() throws IOException {
+        while (decoder.hasNext()) {
+            InterfaceHttpData data = decoder.next();
+            if (data != null) {
+                if (data.getHttpDataType() == InterfaceHttpData.HttpDataType.FileUpload) {
+                    FileUpload fileUpload = (FileUpload) data;
+                    if (fileUpload.isCompleted()) {
+                        fileUpload.isInMemory();
+                        fileUpload.renameTo(new File("/opt/testProject/NettyTest/src/" + fileUpload.getFilename()));
+                        decoder.removeHttpDataFromClean(fileUpload);
+                    }
+                }
+            }
+        }
     }
 
     /**

@@ -1,17 +1,18 @@
 package com.yuy.fileUpload;
 
 import com.sun.javafx.scene.shape.PathUtils;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.HttpContent;
-import io.netty.handler.codec.http.HttpObject;
-import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.multipart.*;
+import io.netty.util.CharsetUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.Charset;
 
 public class FileUploadHandler extends SimpleChannelInboundHandler<HttpObject> {
 
@@ -51,6 +52,18 @@ public class FileUploadHandler extends SimpleChannelInboundHandler<HttpObject> {
                 readFileIntoDisk();
             }
         }
+
+        if (msg instanceof LastHttpContent) {
+            HttpResponse response = getResponse();
+            channelHandlerContext.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE).sync();
+        }
+    }
+
+    private FullHttpResponse getResponse() {
+        FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+        String str = "OK";
+        response.content().writeBytes(Unpooled.copiedBuffer(str.getBytes()));
+        return response;
     }
 
 
