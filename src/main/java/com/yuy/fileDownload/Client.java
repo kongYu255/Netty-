@@ -1,12 +1,8 @@
-package com.yuy.file;
-
-import jdk.internal.util.xml.impl.Input;
+package com.yuy.fileDownload;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
-import java.util.Map;
 
 public class Client {
 

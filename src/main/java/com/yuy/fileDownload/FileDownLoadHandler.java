@@ -1,12 +1,10 @@
-package com.yuy.file;
+package com.yuy.fileDownload;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 
-import javax.activation.MimetypesFileTypeMap;
 import java.io.*;
 import java.net.URLDecoder;
 import java.util.HashMap;

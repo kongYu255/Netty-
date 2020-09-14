@@ -1,4 +1,4 @@
-package com.yuy.file;
+package com.yuy.fileDownload;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;

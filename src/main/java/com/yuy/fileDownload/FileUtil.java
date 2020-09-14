@@ -1,16 +1,10 @@
-package com.yuy.file;
+package com.yuy.fileDownload;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.HttpResponse;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.RandomAccessFile;
 
 public class FileUtil {
 
