@@ -39,7 +39,7 @@ public class FileUploadClient {
     }
 
     public static void main(String[] args) {
-        int port = 8080;
+        int port = 8081;
         if (args != null && args.length > 0) {
             try {
                 port = Integer.valueOf(args[0]);
@@ -48,8 +48,8 @@ public class FileUploadClient {
             }
         }
         try {
-            File file = new File(System.getProperty("user.dir") + "/src/Colorful-Abstraction02.jpg");
-            new FileUploadClient().connect(port, "127.0.0.1", "/home/santi/Desktop/upload", file);
+            File file = new File("/home/santi/Downloads/");
+            new FileUploadClient().connect(port, "127.0.0.1", "/upload", file);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -13,7 +13,7 @@ public class FileUploadServerHandler extends SimpleChannelInboundHandler<Object>
 
     private volatile int start = 0;
 
-    private String fileDir = "/home/santi/Desktop";
+    private String DEFAULT_FILE_DIR = System.getProperty("user.dir") + "/src";
 
 
     @Override
@@ -27,10 +27,13 @@ public class FileUploadServerHandler extends SimpleChannelInboundHandler<Object>
             String md5 = ef.getFile_md5();
             String path = null;
             if (ef.getFilePath() == null || ef.getFilePath().equals("")) {
-                path = fileDir + File.separator;
+                path = DEFAULT_FILE_DIR + File.separator;
             } else {
-                path = ef.getFilePath() + File.separator;
+                path = DEFAULT_FILE_DIR + ef.getFilePath() + File.separator;
             }
+            // 根据不同系统更换路径
+            path.replace('/', File.separatorChar);
+
             // 查看目录是否存在
             File dir = new File(path);
             if (!dir.exists()) {
