@@ -1,10 +1,53 @@
 package com.yuy;
 
-import java.io.File;
+import com.alibaba.fastjson.JSONObject;
+import io.netty.util.CharsetUtil;
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println(System.getProperty("ssl"));
+        try {
+            URL url = new URL("http://127.0.0.1:8080/delete");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setUseCaches(false);
+            connection.setRequestProperty("Charsert", "UTF-8");
+            connection.setRequestProperty("Content-Type", "application/json");
+
+            OutputStream outputStream = connection.getOutputStream();
+            DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
+            JSONObject object = new JSONObject();
+            object.put("filePath", "/src/upload/Colorful-Abstraction01.jpg");
+            dataOutputStream.write(object.toJSONString().getBytes());
+            outputStream.close();
+            dataOutputStream.close();
+
+            int code = connection.getResponseCode();
+            if (code == HttpURLConnection.HTTP_OK) {
+                // 接受返回信息
+                InputStream inputStream = connection.getInputStream();
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                StringBuffer stringBuffer = new StringBuffer();
+                String str = null;
+                while ((str = bufferedReader.readLine()) != null) {
+                    stringBuffer.append(str);
+                }
+                System.out.println(stringBuffer.toString());
+//                InputStream inputStream = httpURLConnection.getInputStream();
+//                OutputStream outputStream = new FileOutputStream(new File("/home/santi/Desktop/123.txt"));
+//                byte[] bytes = new byte[308];
+//                inputStream.read(bytes);
+//                outputStream.write(bytes);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

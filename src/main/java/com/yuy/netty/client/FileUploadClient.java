@@ -48,7 +48,7 @@ public class FileUploadClient {
             }
         }
         try {
-            File file = new File("/home/santi/Downloads/");
+            File file = new File("/home/santi/Desktop/Colorful-Abstraction01.jpg");
             new FileUploadClient().connect(port, "127.0.0.1", "/upload", file);
         } catch (Exception e) {
             e.printStackTrace();

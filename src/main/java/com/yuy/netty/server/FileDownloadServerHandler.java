@@ -132,26 +132,26 @@ public class FileDownloadServerHandler extends SimpleChannelInboundHandler<HttpO
         if (HttpUtil.isKeepAlive(request)) {
             response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         }
-        Map<String, Object> content = new HashMap<String, Object>();
-        content.put("fileName", "123.txt");
-        byte[] bytes = null;
-        ByteArrayOutputStream bo = new ByteArrayOutputStream();
-        ObjectOutputStream oos = null;
-        try {
-            oos = new ObjectOutputStream(bo);
-            oos.writeObject(content);
-            bytes = bo.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                bo.close();
-                oos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        response.content().writeBytes(bytes);
+//        Map<String, Object> content = new HashMap<String, Object>();
+//        content.put("fileName", "123.txt");
+//        byte[] bytes = null;
+//        ByteArrayOutputStream bo = new ByteArrayOutputStream();
+//        ObjectOutputStream oos = null;
+//        try {
+//            oos = new ObjectOutputStream(bo);
+//            oos.writeObject(content);
+//            bytes = bo.toByteArray();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } finally {
+//            try {
+//                bo.close();
+//                oos.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        response.content().writeBytes(bytes);
 
         ChannelFuture channelFuture = ctx.writeAndFlush(response);
 

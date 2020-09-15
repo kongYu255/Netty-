@@ -28,6 +28,7 @@ public class FileDownloadServer {
                         System.out.println("有客户端连接上来:"+ch.localAddress().toString());
                         ch.pipeline().addLast(new HttpRequestDecoder());
                         ch.pipeline().addLast(new HttpResponseEncoder()); // 最大长度
+                        ch.pipeline().addLast(new FileDeleteServerHandler());
                         ch.pipeline().addLast(new FileDownloadServerHandler("/src"));
                     }
                 });
