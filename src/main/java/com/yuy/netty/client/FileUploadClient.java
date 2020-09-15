@@ -13,7 +13,12 @@ import java.io.File;
 
 
 public class FileUploadClient {
-    public void connect(int port, String host, final FileUploadFile fileUploadFile) throws Exception {
+    public void connect(int port, String host, String filePath, File file) throws Exception {
+        final FileUploadFile fileUploadFile = new FileUploadFile();
+        fileUploadFile.setFilePath(filePath);
+        fileUploadFile.setFile(file);
+        fileUploadFile.setStarPos(0);
+        fileUploadFile.setFile_md5(file.getName());
         EventLoopGroup group = new NioEventLoopGroup(1);
         try {
             Bootstrap b = new Bootstrap();
@@ -43,14 +48,8 @@ public class FileUploadClient {
             }
         }
         try {
-            FileUploadFile uploadFile = new FileUploadFile();
             File file = new File(System.getProperty("user.dir") + "/src/Colorful-Abstraction02.jpg");
-            String fileMd5 = file.getName();// 文件名
-            uploadFile.setFile(file);
-            uploadFile.setFile_md5(fileMd5);
-            uploadFile.setFilePath("/home/santi/Desktop/upload");
-            uploadFile.setStarPos(0);// 文件开始位置
-            new FileUploadClient().connect(port, "127.0.0.1", uploadFile);
+            new FileUploadClient().connect(port, "127.0.0.1", "/home/santi/Desktop/upload", file);
         } catch (Exception e) {
             e.printStackTrace();
         }

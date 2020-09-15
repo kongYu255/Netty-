@@ -15,7 +15,7 @@ public class FileUploadServer {
         //声明两个多线程事件循环器
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
-//声明nio服务启动类
+        //声明nio服务启动类
         ServerBootstrap serverBootstrap = new ServerBootstrap ();
         serverBootstrap.group(bossGroup, workerGroup).
                 channel(NioServerSocketChannel.class).
