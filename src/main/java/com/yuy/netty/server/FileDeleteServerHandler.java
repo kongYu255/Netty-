@@ -46,8 +46,12 @@ public class FileDeleteServerHandler extends SimpleChannelInboundHandler<HttpObj
             filePath = sanitizeUri(filePath);
 
             File file = new File(filePath);
-            if (file == null || !file.exists() || file.isDirectory()) {
+            if (file == null || !file.exists()) {
                 sendSuccess(channelHandlerContext, "文件已被删除");
+                return;
+            }
+            if (file.isDirectory()) {
+                sendSuccess(channelHandlerContext, "目标文件是个文件夹");
                 return;
             }
 
