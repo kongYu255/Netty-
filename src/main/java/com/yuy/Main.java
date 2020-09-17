@@ -40,11 +40,6 @@ public class Main {
                     stringBuffer.append(str);
                 }
                 System.out.println(stringBuffer.toString());
-//                InputStream inputStream = httpURLConnection.getInputStream();
-//                OutputStream outputStream = new FileOutputStream(new File("/home/santi/Desktop/123.txt"));
-//                byte[] bytes = new byte[308];
-//                inputStream.read(bytes);
-//                outputStream.write(bytes);
             }
         } catch (Exception e) {
             e.printStackTrace();

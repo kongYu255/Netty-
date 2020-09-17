@@ -62,7 +62,6 @@ public class FileDeleteServerHandler extends SimpleChannelInboundHandler<HttpObj
                 sendSuccess(channelHandlerContext, "删除失败");
             }
         }
-        return;
     }
 
     /**
