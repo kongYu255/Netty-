@@ -81,8 +81,8 @@ public class CheckFileTypeUtil {
     }
 
     public static void main(String[] args) {
-        System.out.println(getFileHeader("C:\\Users\\余湧\\Desktop\\PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png"));
-        System.out.println(getFileHeader("C:\\Users\\余湧\\Desktop\\21a4462309f79052559f406fe0d785cd7acbd58f.jpeg"));
+        System.out.println(getFileHeader("C:\\Users\\xxx\\Desktop\\PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png"));
+        System.out.println(getFileHeader("C:\\Users\\xxx\\Desktop\\21a4462309f79052559f406fe0d785cd7acbd58f.jpeg"));
 
     }
 

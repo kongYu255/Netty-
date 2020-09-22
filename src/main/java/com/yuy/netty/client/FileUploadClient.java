@@ -50,7 +50,7 @@ public class FileUploadClient {
             }
         }
         try {
-            File file = new File("C:\\Users\\余湧\\Desktop\\PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png");
+            File file = new File("C:\\Users\\xxx\\Desktop\\PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png");
             String result = new FileUploadClient().connect(port, "127.0.0.1", "/upload", file);
             System.out.println(result);
         } catch (Exception e) {
