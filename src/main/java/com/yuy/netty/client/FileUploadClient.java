@@ -1,6 +1,7 @@
 package com.yuy.netty.client;
 
 import com.yuy.netty.FileUploadFile;
+import com.yuy.netty.util.IdUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -8,8 +9,10 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
 
 
 public class FileUploadClient {
@@ -18,7 +21,7 @@ public class FileUploadClient {
         fileUploadFile.setFilePath(filePath);
         fileUploadFile.setFile(file);
         fileUploadFile.setStarPos(0);
-        fileUploadFile.setFile_md5(file.getName());
+        fileUploadFile.setFile_md5(IdUtils.getId()+file.getName());
         EventLoopGroup group = new NioEventLoopGroup(1);
         FileUploadClientHandler clientHandler = new FileUploadClientHandler(fileUploadFile);
         try {
@@ -50,7 +53,7 @@ public class FileUploadClient {
             }
         }
         try {
-            File file = new File("C:\\Users\\余湧\\Desktop\\PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png");
+            File file = new File("C:\\Users\\余湧\\Desktop\\232112.png");
             String result = new FileUploadClient().connect(port, "127.0.0.1", "/upload", file);
             System.out.println(result);
         } catch (Exception e) {
