@@ -24,12 +24,6 @@ public class FileUploadHandler extends SimpleChannelInboundHandler<HttpObject> {
 
     private HttpPostRequestDecoder decoder;
 
-    static {
-        DiskFileUpload.deleteOnExitTemporaryFile = true;
-        DiskFileUpload.baseDirectory = null;
-        DiskAttribute.deleteOnExitTemporaryFile = true;
-        DiskAttribute.baseDirectory = null;
-    }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
@@ -83,7 +77,7 @@ public class FileUploadHandler extends SimpleChannelInboundHandler<HttpObject> {
                     FileUpload fileUpload = (FileUpload) data;
                     if (fileUpload.isCompleted()) {
                         fileUpload.isInMemory();
-                        fileUpload.renameTo(new File("/opt/testProject/NettyTest/src/" + fileUpload.getFilename()));
+                        fileUpload.renameTo(new File("E:\\" + fileUpload.getFilename()));
                         decoder.removeHttpDataFromClean(fileUpload);
                     }
                 }

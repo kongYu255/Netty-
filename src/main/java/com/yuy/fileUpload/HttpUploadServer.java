@@ -5,10 +5,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.HttpContentCompressor;
-import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpRequestDecoder;
-import io.netty.handler.codec.http.HttpResponseEncoder;
+import io.netty.handler.codec.http.*;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
 public class HttpUploadServer {
@@ -25,11 +22,9 @@ public class HttpUploadServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             ChannelPipeline pipeline = socketChannel.pipeline();
-
-                            pipeline.addLast("http-decoder", new HttpRequestDecoder());
-                            pipeline.addLast("http-encoder", new HttpResponseEncoder());
+                            pipeline.addLast(new HttpServerCodec());
                             pipeline.addLast(new HttpContentCompressor());
-//                            pipeline.addLast("http-chunked", new ChunkedWriteHandler());
+                            pipeline.addLast("http-chunked", new ChunkedWriteHandler());
                             pipeline.addLast("", new FileUploadHandler());
                         }
                     });
