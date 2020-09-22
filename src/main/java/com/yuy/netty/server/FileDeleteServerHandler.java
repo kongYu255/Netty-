@@ -23,7 +23,6 @@ public class FileDeleteServerHandler extends SimpleChannelInboundHandler<HttpObj
             HttpRequest request = (HttpRequest) httpObject;
             if (!request.uri().startsWith("/delete")) {
                 channelHandlerContext.fireChannelRead(httpObject);
-                return;
             }
             if (request.method() != HttpMethod.POST) {
                 sendError(channelHandlerContext, HttpResponseStatus.METHOD_NOT_ALLOWED);
@@ -109,6 +108,7 @@ public class FileDeleteServerHandler extends SimpleChannelInboundHandler<HttpObj
                 Unpooled.copiedBuffer("Failture: " + status.toString() + "\r\n", CharsetUtil.UTF_8));
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain");
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+        ctx.close();
     }
 
 
@@ -123,5 +123,6 @@ public class FileDeleteServerHandler extends SimpleChannelInboundHandler<HttpObj
 
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain");
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+        ctx.close();
     }
 }
