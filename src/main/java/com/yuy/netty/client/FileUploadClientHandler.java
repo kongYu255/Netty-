@@ -1,12 +1,17 @@
 package com.yuy.netty.client;
 
 import com.yuy.netty.FileUploadFile;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpResponse;
+import io.netty.util.CharsetUtil;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.charset.Charset;
 
 public class FileUploadClientHandler extends ChannelInboundHandlerAdapter {
     private int byteRead;
@@ -14,6 +19,7 @@ public class FileUploadClientHandler extends ChannelInboundHandlerAdapter {
     private volatile int lastLength = 0;
     public RandomAccessFile randomAccessFile;
     private FileUploadFile fileUploadFile;
+    private String result;
 
     public FileUploadClientHandler(FileUploadFile ef) {
         if (ef.getFile().exists()) {
@@ -70,6 +76,7 @@ public class FileUploadClientHandler extends ChannelInboundHandlerAdapter {
                     System.out.println("byte 长度：" + bytes.length);
                     fileUploadFile.setEndPos(byteRead);
                     fileUploadFile.setBytes(bytes);
+                    fileUploadFile.setStarPos(start);
                     try {
                         ctx.writeAndFlush(fileUploadFile);
                     } catch (Exception e) {
@@ -82,6 +89,14 @@ public class FileUploadClientHandler extends ChannelInboundHandlerAdapter {
                 }
             }
         }
+        if (msg instanceof String) {
+            result = (String) msg;
+            ctx.close();
+        }
+    }
+
+    public String getResult() {
+        return result;
     }
 
 }

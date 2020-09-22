@@ -1,8 +1,13 @@
 package com.yuy.netty.server;
 
 import com.yuy.netty.FileUploadFile;
+import com.yuy.netty.util.CheckFileTypeUtil;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.*;
+import io.netty.util.CharsetUtil;
 
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -42,15 +47,24 @@ public class FileUploadServerHandler extends SimpleChannelInboundHandler<Object>
             path += md5;
 
             File file = new File(path);
-            RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
-            randomAccessFile.seek(start);
-            randomAccessFile.write(bytes);
-            start = start + byteRead;
-            if (byteRead > 0) {
-                channelHandlerContext.writeAndFlush(start);
+            String fileType = "success";
+            if (ef.getStarPos() == 0) {
+                fileType = CheckFileTypeUtil.getFileTypeByBytes(ef.getBytes());
+                System.out.println(fileType);
+            }
+            if (fileType == null) {
+                channelHandlerContext.writeAndFlush("该文件类型禁止上传!");
             } else {
-                randomAccessFile.close();
-                channelHandlerContext.close();
+                RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
+                randomAccessFile.seek(start);
+                randomAccessFile.write(bytes);
+                start = start + byteRead;
+                if (byteRead > 0) {
+                    channelHandlerContext.writeAndFlush(start);
+                } else {
+                    randomAccessFile.close();
+                    channelHandlerContext.close();
+                }
             }
         }
     }
@@ -61,4 +75,17 @@ public class FileUploadServerHandler extends SimpleChannelInboundHandler<Object>
         cause.printStackTrace();
         ctx.close();
     }
+
+    /**
+     * 产生错误后发送错误消息
+     * @param ctx
+     * @param status
+     */
+    private static void sendError(ChannelHandlerContext ctx, HttpResponseStatus status) {
+        FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status,
+                Unpooled.copiedBuffer("该文件类型禁止被上传" + "\r\n", CharsetUtil.UTF_8));
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain");
+        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+    }
+
 }

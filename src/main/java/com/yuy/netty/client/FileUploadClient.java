@@ -13,13 +13,14 @@ import java.io.File;
 
 
 public class FileUploadClient {
-    public void connect(int port, String host, String filePath, File file) throws Exception {
+    public String connect(int port, String host, String filePath, File file) throws Exception {
         final FileUploadFile fileUploadFile = new FileUploadFile();
         fileUploadFile.setFilePath(filePath);
         fileUploadFile.setFile(file);
         fileUploadFile.setStarPos(0);
         fileUploadFile.setFile_md5(file.getName());
         EventLoopGroup group = new NioEventLoopGroup(1);
+        FileUploadClientHandler clientHandler = new FileUploadClientHandler(fileUploadFile);
         try {
             Bootstrap b = new Bootstrap();
             b.group(group).channel(NioSocketChannel.class).option(ChannelOption.TCP_NODELAY, true).handler(new ChannelInitializer<Channel>() {
@@ -28,7 +29,7 @@ public class FileUploadClient {
                 protected void initChannel(Channel ch) throws Exception {
                     ch.pipeline().addLast(new ObjectEncoder());
                     ch.pipeline().addLast(new ObjectDecoder(ClassResolvers.weakCachingConcurrentResolver(null)));
-                    ch.pipeline().addLast(new FileUploadClientHandler(fileUploadFile));
+                    ch.pipeline().addLast(clientHandler);
                 }
             });
             ChannelFuture f = b.connect(host, port).sync();
@@ -36,6 +37,7 @@ public class FileUploadClient {
         } finally {
             group.shutdownGracefully();
         }
+        return clientHandler.getResult();
     }
 
     public static void main(String[] args) {
@@ -48,8 +50,9 @@ public class FileUploadClient {
             }
         }
         try {
-            File file = new File("/home/santi/Desktop/Colorful-Abstraction01.jpg");
-            new FileUploadClient().connect(port, "127.0.0.1", "/upload", file);
+            File file = new File("C:\\Users\\余湧\\Desktop\\PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png");
+            String result = new FileUploadClient().connect(port, "127.0.0.1", "/upload", file);
+            System.out.println(result);
         } catch (Exception e) {
             e.printStackTrace();
         }
